@@ -1,0 +1,29 @@
+Hello World !!!!!!                      
+
+
+AMAN                                    
+AMAN                                    
+SAME                                    
+
+
+*   *   *                               
+*   *   *                               
+*   *   *                               
+
+
+                    #                   
+                #   #   #               
+            #   #   #   #   #           
+
+
+A   B   B   A                           
+IS                                      
+PALINDROME                              
+
+
+A   B   C   A                           
+IS                                      
+NOT                                     
+PALINDROME                              
+
+
