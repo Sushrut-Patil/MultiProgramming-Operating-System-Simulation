@@ -2,52 +2,97 @@
 #include <fstream>
 #include <string.h>
 #include <stdlib.h>
+#include <cstdlib>
+#include <map>
+#include <math.h>
+#include <vector>
 using namespace std;
 
 class OS
 {
     // Core Data Structures
 private:
-    char M[100][4];
-    char R[4];
-    char IR[4];
-    short IC;
-    bool C;
-    signed char SI;
+    char M[300][4]; // Main Memory
+    char R[4];      // General Purpose Register
+    char IR[4];     // Instruction Register
+    int IC;         // Instruction Counter
+    int VA;         // Virtual Address
+    int RA;         // Real Address
+    bool C;         // Toggle Variable
+    int PTR;        // Page Table Register
+    int TTC;        // Total Time Counter
+    int LLC;        // Line Limit Counter
+
+    // Process Control Block
+    struct PCB
+    {
+        int TTL, TLL, JOBID;
+    } pcb;
+    /*
+    TTL : TOTAL TIME LIMIT
+    TLL : TOTAL LINE LIMIT
+    */
+
+    // Interrupts
+    short SI;
+    short TI; // Time
+    short PI; // Program
+
+    // Error Messages Coding
+    map<int, string> ERRORMSGS{
+        {0, "NO ERROR"},
+        {1, "OUT OF DATA"},
+        {2, "LINE LIMIT EXCEEDED"},
+        {3, "TIME LIMIT EXCEEDED"},
+        {4, "OPERATION CODE ERROR"},
+        {5, "OPERAND ERROR"},
+        {6, "INVALID PAGE FAULT"},
+    };
 
     // Non-Core Data Structures
 public:
     int memory_used;
-    int address;
     char buffer[40];
     string line;
     ifstream finput;
     ofstream foutput;
     bool flag;
+    int Frame;
+    vector<int> ptrarray;
+    int ptr_counter;
+    map<int, int> Datastoremap;
+    bool flag_Exe_end;
 
-    //Constructor
-    OS(string input_file,string output_file)
-    {   
+    // Constructor
+    OS(string input_file, string output_file)
+    {
         finput.open(input_file, ios::in);
         foutput.open(output_file, ios::out);
         line.reserve(40);
-        LOAD();
     }
 
     // Core Functions
+    void INITIALIZATION();
     void LOAD();
+    short ALLOCATE();
     void STARTEXE();
     void EXECUTE();
+    void ADDRESSMAP_IC();
+    void ADDRESSMAP_VA();
     void MOS();
     void READ();
     void WRITE();
-    void TERMINATE();
+    void TERMINATE(short);
+    void TERMINATE(short, short);
+    void SIMULATION();
 
     // Non Core Functions
     void init();
     void printmemory();
     void clearbuffer();
-    void extractaddress();
+    void copytobuffer();
     void storedata();
+    void extractjobdetails();
+    void init_page_table();
+    void update_page_table();
 };
-

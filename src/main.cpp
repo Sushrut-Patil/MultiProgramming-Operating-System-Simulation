@@ -9,6 +9,7 @@ int main()
     // string out = "..\\Output\\custom_output.txt";
 
     OS NewOS(in,out);
+    NewOS.LOAD();
     
     return 0;
 }
