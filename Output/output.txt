@@ -1,9 +1,0 @@
-SHE SELLS   SEA SHELLS ON               
-JOBID : 405
-TIME LIMIT EXCEEDED
-IC : 4
-IR : SR32
-TTC : 3
-LLC : 1
-
-
