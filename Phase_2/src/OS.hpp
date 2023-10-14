@@ -62,6 +62,7 @@ public:
     int ptr_counter;
     map<int, int> Datastoremap;
     bool flag_Exe_end;
+    int count_program_cards;
 
     // Constructor
     OS(string input_file, string output_file)

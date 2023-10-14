@@ -79,13 +79,12 @@ void OS::EXECUTE()
             IR[i] = M[RA][i];
         }
         ADDRESSMAP_VA();
-        IC++;
-        if (PI != 0)
+        if (PI != 0 || TI != 0)
         {
             MOS();
             return;
         }
-
+        IC++;
         if (IR[0] == 'G' && IR[1] == 'D')
         {
             SI = 1;
@@ -135,13 +134,13 @@ void OS::EXECUTE()
         {
             PI = 1;
         }
-        SIMULATION();
         if (SI != 0 || PI != 0 || TI != 0)
         {
             MOS();
         }
-        
+        SIMULATION();
     }
+    return;
 }
 
 void OS::ADDRESSMAP_IC()
@@ -226,6 +225,7 @@ void OS::MOS()
         }
         else if (SI == 3)
         {
+            TTC++;
             TERMINATE(0);
         }
         else if (PI == 1)
@@ -238,11 +238,12 @@ void OS::MOS()
         }
         else if (PI == 3)
         {
+            
             /* If Page Fault Valid, ALLOCATE, update page Table,Adjust IC if necessary,EXECUTE USER PROGRAM OTHERWISE TERMINATE (6)*/
             if (IR[0] == 'G' && IR[1] == 'D' && IR[0] == 'S' && IR[1] == 'R')
             {
-                update_page_table();
                 IC--;
+                update_page_table();
             }
             else
             {
@@ -258,6 +259,7 @@ void OS::MOS()
         }
         else if (SI == 2)
         {
+            TTC++;
             WRITE();
             TERMINATE(3);
         }
@@ -356,14 +358,10 @@ void OS::TERMINATE(short EM1, short EM2)
 }
 void OS::SIMULATION()
 {
-    
-    if (TTC + 1 > pcb.TTL)
+    TTC++;
+    if (TTC > pcb.TTL)
     {
         TI = 2;
-    }
-    else
-    {
-        TTC++;
-    }
+    }   
     return;
 }

@@ -22,6 +22,7 @@ void OS::init()
     ptr_counter = 0;
     Datastoremap.clear();
     flag_Exe_end = true;
+    count_program_cards = 0;
 }
 
 // Function to copy line to buffer.
@@ -101,6 +102,8 @@ void OS::update_page_table()
 {
     short num = ALLOCATE();
     Frame = num;
+    Datastoremap.insert(pair<int, int>(count_program_cards*10, Frame));
+    count_program_cards++;
     RA = Frame * 10;
     int loc = PTR * 10;
     for (int i = loc; i < loc + 10; i++)

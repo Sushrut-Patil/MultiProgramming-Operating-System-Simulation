@@ -6,7 +6,7 @@ JOBID : 202
 LINE LIMIT EXCEEDED
 IC : 15
 IR : PD60
-TTC : 15
+TTC : 14
 LLC : 4
 
 
@@ -22,7 +22,7 @@ LLC : 2
 
 JOBID : 102
 INVALID PAGE FAULT
-IC : 2
+IC : 1
 IR : LR36
 TTC : 1
 LLC : 0
@@ -30,17 +30,18 @@ LLC : 0
 
 ABCD                                    
 ABCD                                    
+MATCH                                   
 JOBID : 401
-INVALID PAGE FAULT
-IC : 9
-IR : BT10
-TTC : 8
-LLC : 2
+TIME LIMIT EXCEEDED
+IC : 11
+IR : H   
+TTC : 10
+LLC : 3
 
 
 JOBID : 1503
 OPERAND ERROR
-IC : 4
+IC : 3
 IR : SR7A
 TTC : 3
 LLC : 0
@@ -50,7 +51,7 @@ JOBID : 1403
 OPERATION CODE ERROR
 IC : 9
 IR : PA30
-TTC : 9 
+TTC : 8
 LLC : 0
 
 
@@ -58,14 +59,14 @@ JOBID : 1403
 OUT OF DATA
 IC : 1
 IR : GD30
-TTC : 1
+TTC : 0
 LLC : 0
 
 
 SHE SELLS   SEA SHELLS ON               
 JOBID : 402
 OPERAND ERROR
-IC : 5
+IC : 4
 IR : PD3F
 TTC : 4
 LLC : 1
@@ -73,7 +74,7 @@ LLC : 1
 
 SHE SELLS   SEA SHELLS ON               
 JOBID : 403
-TIME LIMIT EXCEEDED & OPERATION CODE ERROR
+OPERATION CODE ERROR
 IC : 5
 IR : PS40
 TTC : 4
@@ -84,8 +85,8 @@ SHE SELLS   SEA SHELLS ON
 JOBID : 405
 TIME LIMIT EXCEEDED
 IC : 4
-IR : SR32
-TTC : 3
+IR : PD40
+TTC : 4
 LLC : 1
 
 
