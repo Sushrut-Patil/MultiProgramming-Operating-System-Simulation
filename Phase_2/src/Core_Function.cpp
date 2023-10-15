@@ -78,13 +78,13 @@ void OS::EXECUTE()
         {
             IR[i] = M[RA][i];
         }
+        IC++;
         ADDRESSMAP_VA();
-        if (PI != 0 || TI != 0)
+        if (PI != 0 || TI == 2)
         {
             MOS();
             return;
         }
-        IC++;
         if (IR[0] == 'G' && IR[1] == 'D')
         {
             SI = 1;
@@ -134,11 +134,12 @@ void OS::EXECUTE()
         {
             PI = 1;
         }
+        SIMULATION();
         if (SI != 0 || PI != 0 || TI != 0)
         {
             MOS();
         }
-        SIMULATION();
+        
     }
     return;
 }
@@ -225,7 +226,6 @@ void OS::MOS()
         }
         else if (SI == 3)
         {
-            TTC++;
             TERMINATE(0);
         }
         else if (PI == 1)
@@ -358,10 +358,12 @@ void OS::TERMINATE(short EM1, short EM2)
 }
 void OS::SIMULATION()
 {
-    TTC++;
-    if (TTC > pcb.TTL)
+    
+    if (TTC + 1 > pcb.TTL)
     {
         TI = 2;
-    }   
+        return;
+    }
+    TTC++;  
     return;
 }
