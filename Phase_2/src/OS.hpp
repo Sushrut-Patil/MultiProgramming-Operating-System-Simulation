@@ -61,6 +61,7 @@ public:
     vector<int> ptrarray;
     int ptr_counter;
     map<int, int> Datastoremap;
+    map<int, int> Programstoremap;
     bool flag_Exe_end;
     int count_program_cards;
 

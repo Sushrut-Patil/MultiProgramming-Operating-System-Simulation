@@ -102,7 +102,7 @@ void OS::update_page_table()
 {
     short num = ALLOCATE();
     Frame = num;
-    Datastoremap.insert(pair<int, int>(count_program_cards*10, Frame));
+    Programstoremap.insert(pair<int, int>(count_program_cards*10, Frame));
     count_program_cards++;
     RA = Frame * 10;
     int loc = PTR * 10;

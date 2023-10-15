@@ -1,0 +1,53 @@
+A                                       
+A                                       
+JOBID : 202
+INVALID PAGE FAULT
+IC : 9
+IR : BT70
+TTC : 8
+LLC : 2
+
+
+A   B   B   A                           
+IS                                      
+PALINDROME                              
+JOBID : 106
+NO ERROR
+IC : 20
+IR : H   
+TTC : 14
+LLC : 3
+
+
+                    #                   
+                #   #   #               
+            #   #   #   #               
+JOBID : 105
+NO ERROR
+IC : 11
+IR : H   
+TTC : 11
+LLC : 3
+
+
+Hello World                             
+Test0    1    3                         
+JOBID : 202
+INVALID PAGE FAULT
+IC : 6
+IR : CR43
+TTC : 5
+LLC : 2
+
+
+Hello World                             
+Test0    1    3                         
+            0                           
+JOBID : 202
+NO ERROR
+IC : 8
+IR : H   
+TTC : 8
+LLC : 3
+
+

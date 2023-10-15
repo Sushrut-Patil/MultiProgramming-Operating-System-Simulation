@@ -74,13 +74,19 @@ void OS::EXECUTE()
     while (flag_Exe_end)
     {
         ADDRESSMAP_IC();
+        if (PI != 0)
+        {
+            MOS();
+            return;
+        }
+
         for (int i = 0; i < 4; i++)
         {
             IR[i] = M[RA][i];
         }
         IC++;
         ADDRESSMAP_VA();
-        if (PI != 0 || TI == 2)
+        if (PI != 0)
         {
             MOS();
             return;
@@ -134,12 +140,12 @@ void OS::EXECUTE()
         {
             PI = 1;
         }
-        SIMULATION();
+
         if (SI != 0 || PI != 0 || TI != 0)
         {
             MOS();
         }
-        
+        SIMULATION();
     }
     return;
 }
@@ -150,6 +156,13 @@ void OS::ADDRESSMAP_IC()
     {
         cout << "IC is not Valid\n";
         PI = 2;
+        return;
+    }
+    int mem_loc = (IC / 10) * 10;
+    if (Programstoremap.find(mem_loc) == Programstoremap.end())
+    {
+        cout << "Frame Not Assigned\n";
+        PI = 3;
         return;
     }
     if (IC % 10 == 0 && IC != 0)
@@ -197,6 +210,21 @@ void OS::ADDRESSMAP_VA()
         }
         RA = Datastoremap[mem_loc] * 10 + (VA % 10);
     }
+    else if (IR[0] == 'B' && IR[1] == 'T')
+    {
+        int mem_loc = (VA / 10) * 10;
+        if (Programstoremap.find(mem_loc) == Programstoremap.end())
+        {
+            cout << "Frame Not Assigned\n";
+            PI = 3;
+        }
+        ptr_counter = VA/10;
+        if (VA%10 == 0 && VA !=0)
+        {
+            ptr_counter--;
+        }
+        
+    }
     else
     {
         int mem_loc = (VA / 10) * 10;
@@ -226,6 +254,7 @@ void OS::MOS()
         }
         else if (SI == 3)
         {
+            TTC++;
             TERMINATE(0);
         }
         else if (PI == 1)
@@ -238,7 +267,7 @@ void OS::MOS()
         }
         else if (PI == 3)
         {
-            
+
             /* If Page Fault Valid, ALLOCATE, update page Table,Adjust IC if necessary,EXECUTE USER PROGRAM OTHERWISE TERMINATE (6)*/
             if (IR[0] == 'G' && IR[1] == 'D' && IR[0] == 'S' && IR[1] == 'R')
             {
@@ -283,7 +312,6 @@ void OS::MOS()
         {
             TERMINATE(3);
         }
-        
     }
 }
 
@@ -310,6 +338,7 @@ void OS::WRITE()
 {
     if (LLC + 1 > pcb.TLL)
     {
+        TTC++;
         TERMINATE(2);
     }
     else
@@ -358,12 +387,10 @@ void OS::TERMINATE(short EM1, short EM2)
 }
 void OS::SIMULATION()
 {
-    
-    if (TTC + 1 > pcb.TTL)
+    TTC++;
+    if (TTC == pcb.TTL)
     {
         TI = 2;
-        return;
     }
-    TTC++;  
     return;
 }
