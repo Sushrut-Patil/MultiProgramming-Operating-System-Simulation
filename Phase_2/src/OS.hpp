@@ -6,6 +6,8 @@
 #include <map>
 #include <math.h>
 #include <vector>
+#include <ctime> 
+#include <random> 
 using namespace std;
 
 class OS
@@ -51,17 +53,14 @@ private:
 
     // Non-Core Data Structures
 public:
-    int memory_used;
     char buffer[40];
     string line;
     ifstream finput;
     ofstream foutput;
-    bool flag;
+    bool program_card_flag;
     int Frame;
-    vector<int> ptrarray;
+    vector<int> framearray;
     int ptr_counter;
-    map<int, int> Datastoremap;
-    map<int, int> Programstoremap;
     bool flag_Exe_end;
     int count_program_cards;
 
@@ -76,7 +75,7 @@ public:
     // Core Functions
     void INITIALIZATION();
     void LOAD();
-    short ALLOCATE();
+    int ALLOCATE();
     void STARTEXE();
     void EXECUTE();
     void ADDRESSMAP_IC();
@@ -96,5 +95,6 @@ public:
     void storedata();
     void extractjobdetails();
     void init_page_table();
-    void update_page_table();
+    void update_page_table_program();
+    void update_page_table_data();
 };

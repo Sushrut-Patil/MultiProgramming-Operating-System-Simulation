@@ -19,7 +19,7 @@ void OS::LOAD()
         else if (buffer[0] == '$' && buffer[1] == 'D' && buffer[2] == 'T' && buffer[3] == 'A')
         {
             printf("Data card detected\n");
-            flag = false;
+            program_card_flag = false;
             STARTEXE();
             continue;
         }
@@ -28,9 +28,9 @@ void OS::LOAD()
             printf("End card detected\n");
             continue;
         }
-        if (flag)
+        if (program_card_flag)
         {
-            update_page_table();
+            update_page_table_program();
             storedata();
         }
     }
@@ -48,18 +48,29 @@ void OS::INITIALIZATION()
     extractjobdetails();
 }
 
-short OS::ALLOCATE()
+int OS::ALLOCATE()
 {
-    int frameno = rand() % 30;
-    for (int i : ptrarray)
-    {
-        if (i == frameno)
-        {
-            return ALLOCATE();
-        }
-    }
-    ptrarray.push_back(frameno);
-    return frameno;
+    random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<int> distribution(0, 30);
+
+        int frameno;
+        bool matchflag = true;
+
+        do {
+            frameno = distribution(gen);
+            matchflag = false;
+
+            for (int i : framearray) {
+                if (i == frameno) {
+                    matchflag = true;
+                    break;
+                }
+            }
+        } while (matchflag);
+
+        framearray.push_back(frameno);
+        return frameno;
 }
 void OS::STARTEXE()
 {
@@ -89,7 +100,10 @@ void OS::EXECUTE()
         if (PI != 0)
         {
             MOS();
-            return;
+            if (PI!=0)
+            {
+                return;
+            }    
         }
         if (IR[0] == 'G' && IR[1] == 'D')
         {
@@ -152,16 +166,10 @@ void OS::EXECUTE()
 
 void OS::ADDRESSMAP_IC()
 {
-    if (IC < 0 && IC > 99)
+    int mem_loc = (IC / 10);
+    if (M[PTR*10 + mem_loc][0] != '1' || mem_loc >= count_program_cards)
     {
-        cout << "IC is not Valid\n";
-        PI = 2;
-        return;
-    }
-    int mem_loc = (IC / 10) * 10;
-    if (Programstoremap.find(mem_loc) == Programstoremap.end())
-    {
-        cout << "Frame Not Assigned\n";
+        cout << "Invalid IC\n";
         PI = 3;
         return;
     }
@@ -170,8 +178,8 @@ void OS::ADDRESSMAP_IC()
         ptr_counter++;
     }
     int ptr_add = PTR * 10 + ptr_counter;
-    int frameno = (M[ptr_add][2] - '0') * 10 + (M[ptr_add][3] - '0');
-    RA = frameno * 10 + IC % 10;
+    Frame = (M[ptr_add][2] - '0') * 10 + (M[ptr_add][3] - '0');
+    RA = Frame * 10 + IC % 10;
     return;
 }
 
@@ -187,59 +195,26 @@ void OS::ADDRESSMAP_VA()
         return;
     }
     VA = (IR[2] - '0') * 10 + (IR[3] - '0');
-    if (VA < 0 && VA > 99)
+
+    int mem_loc = PTR * 10 + (VA / 10);
+    if (M[mem_loc][0] != '1')
     {
-        cout << "VA is not Valid\n";
-        PI = 2;
+        PI = 3;
         return;
     }
-    if (IR[0] == 'G' && IR[1] == 'D')
+    if (IR[0] == 'B' && IR[1] == 'T')
     {
-        int frameno = ALLOCATE();
-        int mem_loc = (VA / 10) * 10;
-        Datastoremap.insert(pair<int, int>(mem_loc, frameno));
-        RA = frameno * 10;
-    }
-    else if (IR[0] == 'S' && IR[1] == 'R')
-    {
-        int mem_loc = (VA / 10) * 10;
-        if (Datastoremap.find(mem_loc) == Datastoremap.end())
-        {
-            int frameno = ALLOCATE();
-            Datastoremap.insert(pair<int, int>(mem_loc, frameno));
-        }
-        RA = Datastoremap[mem_loc] * 10 + (VA % 10);
-    }
-    else if (IR[0] == 'B' && IR[1] == 'T')
-    {
-        int mem_loc = (VA / 10) * 10;
-        if (Programstoremap.find(mem_loc) == Programstoremap.end())
-        {
-            cout << "Frame Not Assigned\n";
-            PI = 3;
-        }
         ptr_counter = VA/10;
-        if (VA%10 == 0 && VA !=0)
+        if (VA%10 == 0)
         {
             ptr_counter--;
         }
-        
     }
-    else
-    {
-        int mem_loc = (VA / 10) * 10;
-        if (Datastoremap.find(mem_loc) == Datastoremap.end())
-        {
-            cout << "Frame Not Assigned\n";
-            PI = 3;
-        }
-        else
-        {
-            RA = Datastoremap[mem_loc] * 10 + (VA % 10);
-        }
-    }
+    Frame = (M[mem_loc][2] - '0') * 10 + (M[mem_loc][3] - '0');
+    RA = Frame * 10 + (VA % 10);
     return;
 }
+
 void OS::MOS()
 {
     if (TI == 0)
@@ -267,16 +242,16 @@ void OS::MOS()
         }
         else if (PI == 3)
         {
-
             /* If Page Fault Valid, ALLOCATE, update page Table,Adjust IC if necessary,EXECUTE USER PROGRAM OTHERWISE TERMINATE (6)*/
-            if (IR[0] == 'G' && IR[1] == 'D' && IR[0] == 'S' && IR[1] == 'R')
+            if (IR[0] == 'G' && IR[1] == 'D' || IR[0] == 'S' && IR[1] == 'R')
             {
-                IC--;
-                update_page_table();
+                update_page_table_data();
+                PI = 0;
             }
             else
             {
                 TERMINATE(6);
+
             }
         }
     }

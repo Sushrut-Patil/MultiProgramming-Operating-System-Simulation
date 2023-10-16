@@ -15,12 +15,11 @@ void OS::init()
         IR[i] = ' ';
         R[i] = ' ';
     }
-    memory_used = 0;
-    flag = true;
+    program_card_flag = true;
     C = false;
-    ptrarray.clear();
+    framearray.clear();
     ptr_counter = 0;
-    Datastoremap.clear();
+    SI = 0;
     flag_Exe_end = true;
     count_program_cards = 0;
 }
@@ -98,23 +97,29 @@ void OS::init_page_table()
     }
 }
 
-void OS::update_page_table()
+void OS::update_page_table_program()
 {
-    short num = ALLOCATE();
+    int num = ALLOCATE();
     Frame = num;
-    Programstoremap.insert(pair<int, int>(count_program_cards*10, Frame));
-    count_program_cards++;
     RA = Frame * 10;
-    int loc = PTR * 10;
-    for (int i = loc; i < loc + 10; i++)
-    {
-        if (M[i][0] == '0')
-        {
-            M[i][0] = '1';
-            M[i][3] = num % 10 + '0';
-            num /= 10;
-            M[i][2] = num + '0';
-            break;
-        }
-    }
+    int i = PTR * 10 + count_program_cards;
+    M[i][0] = '1';
+    M[i][3] = num % 10 + '0';
+    num /= 10;
+    M[i][2] = num + '0';
+
+    count_program_cards++;
+    return;
+}
+
+void OS::update_page_table_data()
+{
+    int num = ALLOCATE();
+    Frame = num;
+    RA = Frame * 10 + (VA % 10);
+    int loc = PTR * 10 + (VA / 10);
+    M[loc][0] = '1';
+    M[loc][3] = num % 10 + '0';
+    num /= 10;
+    M[loc][2] = num + '0';
 }
